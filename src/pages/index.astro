@@ -1,0 +1,101 @@
+---
+import Layout from "@layouts/Layout.astro";
+import { SEO } from "astro-seo";
+import Nav from "@components/Nav.astro";
+
+import {
+  getForum,
+  getUser,
+  getGuild,
+  getGuildChannels,
+  getGuildActiveThreads,
+  getChannelArchivedThreads,
+} from "@utils/discord";
+
+const channels = await getGuildChannels();
+const forumChannel = getForum(channels);
+const threads = await getGuildActiveThreads(forumChannel);
+const archivedThreads = await getChannelArchivedThreads(forumChannel.id);
+
+const guild = await getGuild();
+---
+
+<head>
+  <SEO
+    title={`${guild.name}'s ${forumChannel.name} forum channel`}
+    description={`Use this page to find forum posts from the ${guild.name} discord Forum ${forumChannel.name}. To become a part of the conversation, join the Discord!`}
+  />
+</head>
+
+<Layout>
+  <Nav guild={guild} />
+  <main>
+    <h1 class="text-5xl font-bold">#{forumChannel.name}</h1>
+    <div class="flex h-full overflow-scroll flex-col gap-4 mt-4">
+      <h2>Active Threads:</h2>
+      {
+        threads.map(async (thread) => {
+          const user = await getUser(thread.owner_id);
+          return (
+            <a href={`/forum/${thread.id}`}>
+              <article class="flex flex-col border-2 p-5 rounded-lg border-slate-800 bg-gray-700">
+                <div class="flex gap-3">
+                  {typeof user.avatar === "undefined" || "null" ? (
+                    <img
+                      src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
+                      class="rounded-full h-10 w-10 self-center"
+                    />
+                  ) : (
+                    <img
+                      src={`https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`}
+                      class="rounded-full h-10 w-10 self-center"
+                    />
+                  )}
+                  <h2 class="font-bold text-2xl self-center">{thread.name}</h2>
+                </div>
+
+                <p class="mt-5">Messages: {thread.message_count}</p>
+              </article>
+            </a>
+          );
+        })
+      }
+      <h2>Archived Threads:</h2>
+      {
+        archivedThreads.map(async (thread) => {
+          const user = await getUser(thread.owner_id);
+          return (
+            <a href={`/forum/${thread.id}`}>
+              <article class="flex flex-col border-2 p-5 rounded-md border-slate-800 bg-gray-700">
+                <div class="flex gap-3">
+                  {typeof user.avatar === "undefined" ? (
+                    <img
+                      src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
+                      class="rounded-full h-10 w-10 self-center"
+                    />
+                  ) : (
+                    <img
+                      src={`https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`}
+                      class="rounded-full h-10 w-10 self-center"
+                    />
+                  )}
+                  <h2 class="font-bold text-2xl self-center">{thread.name}</h2>
+                </div>
+
+                <p class="mt-5">Messages: {thread.message_count}</p>
+              </article>
+            </a>
+          );
+        })
+      }
+    </div>
+  </main>
+</Layout>
+
+<style>
+  main {
+    margin: auto;
+    padding: 1.5rem;
+    max-width: 80ch;
+  }
+</style>
