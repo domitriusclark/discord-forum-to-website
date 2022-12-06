@@ -5,7 +5,8 @@
     "paths": {
       "@components/*": ["src/components/*"],
       "@layouts/*": ["src/layouts/*"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "@lib/*": ["src/lib/*"]
     },
     "jsx": "preserve",
     "jsxImportSource": "solid-js"

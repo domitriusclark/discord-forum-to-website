@@ -234,7 +234,6 @@ export async function getGuildChannels() {
 }
 
 export function getForum(channels: APIChannel[]) {
-  console.log(channels);
   // 15 is the channel type for Forum Channels
   const forum = channels.find(
     (channel: APIChannel) =>
