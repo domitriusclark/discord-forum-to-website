@@ -1,6 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import Nav from "@components/Nav.astro";
+import { SEO } from "astro-seo";
 import {
   getChannel,
   getChannelMessages,
@@ -16,6 +17,10 @@ const invite = await createChannelInvite(id);
 const messages = await getChannelMessages(id);
 const guild = await getGuild();
 ---
+
+<head>
+  <SEO title={`${guild.name} Forum | ${channel.name}`} />
+</head>
 
 <Layout title={`${channel.name}`}>
   <Nav guild={guild} />
