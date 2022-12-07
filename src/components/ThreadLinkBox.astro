@@ -1,0 +1,18 @@
+---
+const { isActiveLink, thread, avatar, tags } = Astro.props;
+---
+
+<a
+  class={`flex border-2 ${isActiveLink} rounded-lg bg-gray-700 flex-col max-w-full md:max-w-[90%] min-w-full md:min-w-[90%]`}
+  href={`/forum/${thread.id}`}
+>
+  <article class="p-5">
+    <div class="flex gap-3">
+      <img src={avatar} class="rounded-full h-10 w-10 self-center" />
+
+      <h2 class="font-bold text-xl self-center">{thread.name}</h2>
+    </div>
+
+    <p class="mt-5">Messages: {thread.message_count}</p>
+  </article>
+</a>

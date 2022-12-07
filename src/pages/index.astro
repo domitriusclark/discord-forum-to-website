@@ -27,7 +27,12 @@ const guild = await getGuild();
 </head>
 
 <Layout>
-  <Sidebar threads={threads} archivedThreads={archivedThreads} guild={guild} />
+  <Sidebar
+    tags={tags}
+    threads={threads}
+    archivedThreads={archivedThreads}
+    guild={guild}
+  />
   <main>
     <h1 class="text-5xl font-bold">#{forumChannel.name}</h1>
   </main>

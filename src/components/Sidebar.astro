@@ -1,42 +1,29 @@
 ---
+import ThreadLinkBox from "@components/ThreadLinkBox.astro";
 import { getUser } from "@lib/discord";
 
-const { id = "", threads, archivedThreads, guild } = Astro.props;
+const { id = "", threads, archivedThreads, tags } = Astro.props;
 ---
 
-<nav class="bg-gray-500 h-screen w-1/4 flex justify-center">
+<nav class="bg-gray-500 h-screen w-2/5 flex justify-center">
   <div class="flex h-full overflow-scroll flex-col gap-4 items-center">
     <h2>Active Threads:</h2>
     {
       threads.map(async (thread) => {
-        console.log(thread);
         const user = await getUser(thread.owner_id);
+        const avatar =
+          typeof user.avatar === "undefined" || "null"
+            ? "https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
+            : `https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`;
+        const isActiveLink =
+          id === parseInt(thread.id) ? "border-red-800" : "border-slate-800";
         return (
-          <a
-            class={`flex border-2 ${
-              id === parseInt(thread.id) ? "border-red-800" : "border-slate-800"
-            } rounded-lg bg-gray-700 flex-col max-w-full md:max-w-[90%] min-w-full md:min-w-[90%]`}
-            href={`/forum/${thread.id}`}
-          >
-            <article class="p-5">
-              <div class="flex gap-3">
-                {typeof user.avatar === "undefined" || "null" ? (
-                  <img
-                    src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
-                    class="rounded-full h-10 w-10 self-center"
-                  />
-                ) : (
-                  <img
-                    src={`https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`}
-                    class="rounded-full h-10 w-10 self-center"
-                  />
-                )}
-                <h2 class="font-bold text-2xl self-center">{thread.name}</h2>
-              </div>
-
-              <p class="mt-5">Messages: {thread.message_count}</p>
-            </article>
-          </a>
+          <ThreadLinkBox
+            thread={thread}
+            isActiveLink={isActiveLink}
+            avatar={avatar}
+            tags={tags}
+          />
         );
       })
     }
@@ -44,30 +31,19 @@ const { id = "", threads, archivedThreads, guild } = Astro.props;
     {
       archivedThreads.map(async (thread) => {
         const user = await getUser(thread.owner_id);
+        const avatar =
+          typeof user.avatar === "undefined" || "null"
+            ? "https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
+            : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+        const isActiveLink =
+          id === parseInt(thread.id) ? "border-red-800" : "border-slate-800";
         return (
-          <a
-            class="flex border-2 rounded-lg bg-gray-700 flex-col max-w-full md:max-w-[90%] min-w-full md:min-w-[90%]  border-slate-800"
-            href={`/forum/${thread.id}`}
-          >
-            <article class="p-5">
-              <div class="flex gap-3">
-                {typeof user.avatar === "undefined" ? (
-                  <img
-                    src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
-                    class="rounded-full h-10 w-10 self-center"
-                  />
-                ) : (
-                  <img
-                    src={`https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`}
-                    class="rounded-full h-10 w-10 self-center"
-                  />
-                )}
-                <h2 class="font-bold text-2xl self-center">{thread.name}</h2>
-              </div>
-
-              <p class="mt-5">Messages: {thread.message_count}</p>
-            </article>
-          </a>
+          <ThreadLinkBox
+            thread={thread}
+            isActiveLink={isActiveLink}
+            avatar={avatar}
+            tags={tags}
+          />
         );
       })
     }

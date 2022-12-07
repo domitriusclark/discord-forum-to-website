@@ -34,7 +34,7 @@ const guild = await getGuild();
     archivedThreads={archivedThreads}
     guild={guild}
   />
-  <main class="h-full">
+  <main class="h-full w-full px-6 pt-4">
     <div class="flex flex-col gap-3">
       <h1 class="text-4xl">{channel.name}</h1>
       <a class="mt-4" href={`https://discord.gg/${invite.code}`}>
@@ -44,6 +44,7 @@ const guild = await getGuild();
     <div class="flex flex-col gap-4 mt-7">
       {
         messages.reverse().map(async (message) => {
+          console.log(message);
           const user = await getUser(message.author.id);
           return (
             <article class="flex flex-col border-2 p-5 rounded-lg border-slate-800 bg-gray-700">
@@ -69,10 +70,3 @@ const guild = await getGuild();
     </div>
   </main>
 </Layout>
-<style>
-  main {
-    margin: auto;
-    padding: 1.5rem;
-    max-width: 80ch;
-  }
-</style>
