@@ -1,6 +1,8 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import Sidebar from "@components/Sidebar.astro";
+import Discord, { APIMessage } from "discord.js";
+
 import {
   getChannel,
   getChannelMessages,
@@ -44,7 +46,25 @@ const guild = await getGuild();
     <div class="flex flex-col gap-4 mt-7">
       {
         messages.reverse().map(async (message) => {
-          console.log(message);
+          function formatNewlines(message: APIMessage) {
+            let html;
+            const content = message.content.split("\n");
+            content.forEach((line: string, index: number) => {
+              if (line === "") {
+                content[index] = "<br />";
+              }
+            });
+            const eachline = content.map((string: string) => {
+              if (string === "<br />") {
+                return <br />;
+              }
+
+              return <p>{string}</p>;
+            });
+
+            return eachline;
+          }
+
           const user = await getUser(message.author.id);
           return (
             <article class="flex flex-col border-2 p-5 rounded-lg border-slate-800 bg-gray-700">
@@ -62,7 +82,10 @@ const guild = await getGuild();
                 )}
                 <h3 class="font-bold">Written by: {message.author.username}</h3>
               </div>
-              <p class="mt-4">{message.content}</p>
+
+              <div class="flex flex-col gap-3 mt-3">
+                {formatNewlines(message)}
+              </div>
             </article>
           );
         })
