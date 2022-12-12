@@ -1,0 +1,35 @@
+---
+import { getUser } from "@lib/discord";
+import { toHTML } from "discord-markdown";
+
+const { message } = Astro.props;
+
+const user = await getUser(message.author.id);
+
+const html = toHTML(message.content);
+---
+
+<article
+  class="flex flex-col border-2 p-5 rounded-lg border-slate-800 bg-gray-700"
+>
+  <div class="flex gap-3 items-center">
+    {
+      typeof user.avatar === "undefined" || "null" ? (
+        <img
+          src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
+          class="rounded-full h-10 w-10 self-center"
+        />
+      ) : (
+        <img
+          src={`https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`}
+          class="rounded-full h-10 w-10 self-center"
+        />
+      )
+    }
+    <h3 class="font-bold">Written by: {message.author.username}</h3>
+  </div>
+
+  <div class="flex flex-col gap-1 mt-5">
+    {html}
+  </div>
+</article>

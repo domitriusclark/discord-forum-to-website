@@ -1,7 +1,7 @@
 ---
 import Layout from "@layouts/Layout.astro";
 import Sidebar from "@components/Sidebar.astro";
-import Discord, { APIMessage } from "discord.js";
+import DiscordMessage from "@components/DiscordMessage.astro";
 
 import {
   getChannel,
@@ -10,7 +10,6 @@ import {
   createChannelInvite,
   getForum,
   getGuildChannels,
-  getUser,
   getGuildActiveThreads,
   getChannelArchivedThreads,
 } from "@lib/discord";
@@ -45,50 +44,9 @@ const guild = await getGuild();
     </div>
     <div class="flex flex-col gap-4 mt-7">
       {
-        messages.reverse().map(async (message) => {
-          function formatNewlines(message: APIMessage) {
-            let html;
-            const content = message.content.split("\n");
-            content.forEach((line: string, index: number) => {
-              if (line === "") {
-                content[index] = "<br />";
-              }
-            });
-            const eachline = content.map((string: string) => {
-              if (string === "<br />") {
-                return <br />;
-              }
-
-              return <p>{string}</p>;
-            });
-
-            return eachline;
-          }
-
-          const user = await getUser(message.author.id);
-          return (
-            <article class="flex flex-col border-2 p-5 rounded-lg border-slate-800 bg-gray-700">
-              <div class="flex gap-3 items-center">
-                {typeof user.avatar === "undefined" || "null" ? (
-                  <img
-                    src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
-                    class="rounded-full h-10 w-10 self-center"
-                  />
-                ) : (
-                  <img
-                    src={`https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`}
-                    class="rounded-full h-10 w-10 self-center"
-                  />
-                )}
-                <h3 class="font-bold">Written by: {message.author.username}</h3>
-              </div>
-
-              <div class="flex flex-col gap-3 mt-3">
-                {formatNewlines(message)}
-              </div>
-            </article>
-          );
-        })
+        messages
+          .reverse()
+          .map(async (message) => <DiscordMessage message={message} />)
       }
     </div>
   </main>
