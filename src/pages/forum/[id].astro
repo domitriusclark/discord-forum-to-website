@@ -35,7 +35,7 @@ const guild = await getGuild();
     archivedThreads={archivedThreads}
     guild={guild}
   />
-  <main class="h-full w-full px-6 pt-4">
+  <main class="h-full w-full px-6 pt-4 overflow-scroll">
     <div class="flex flex-col gap-3">
       <h1 class="text-4xl">{channel.name}</h1>
       <a class="mt-4" href={`https://discord.gg/${invite.code}`}>
@@ -51,3 +51,9 @@ const guild = await getGuild();
     </div>
   </main>
 </Layout>
+
+<style>
+  a {
+    color: #7289da !important;
+  }
+</style>

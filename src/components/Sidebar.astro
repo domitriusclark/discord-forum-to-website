@@ -6,7 +6,7 @@ const { id = "", threads, archivedThreads, tags } = Astro.props;
 ---
 
 <nav class="bg-gray-500 h-screen w-2/5 flex justify-center">
-  <div class="flex h-full overflow-scroll flex-col gap-4 items-center">
+  <div class="flex h-full overflow-y-scroll flex-col gap-4 items-center">
     <h2>Active Threads:</h2>
     {
       threads.map(async (thread) => {
