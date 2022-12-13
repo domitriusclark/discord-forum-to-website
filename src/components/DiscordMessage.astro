@@ -16,10 +16,12 @@ const parsed = parse(html);
 
 if (message.attachments.length > 0) {
   message.attachments.map((attachment: APIAttachment) => {
-    const attachmentElement = parse(
-      `<img src="${attachment.proxy_url}" class="w-1/2" alt="${attachment.filename}" />`
-    );
-    parsed.appendChild(attachmentElement);
+    if (attachment.content_type === "image/png") {
+      const attachmentElement = parse(
+        `<img src="${attachment.proxy_url}" class="w-1/2" alt="${attachment.filename}" />`
+      );
+      parsed.appendChild(attachmentElement);
+    }
   });
 }
 
