@@ -1,12 +1,13 @@
 ---
 import { getUser } from "@lib/discord";
 import { toHTML } from "discord-markdown";
+import { parse } from "node-html-parser";
 
 const { message } = Astro.props;
 
 const user = await getUser(message.author.id);
-
 const html = toHTML(message.content);
+const parsed = parse(html);
 ---
 
 <article
@@ -30,6 +31,6 @@ const html = toHTML(message.content);
   </div>
 
   <div class="flex flex-col gap-1 mt-5">
-    {html}
+    <div id="discord-message-content">{parsed}</div>
   </div>
 </article>
