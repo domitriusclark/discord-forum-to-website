@@ -6,7 +6,6 @@ import DiscordMessage from "@components/DiscordMessage.astro";
 import {
   getChannel,
   getChannelMessages,
-  getGuild,
   createChannelInvite,
   getForum,
   getGuildChannels,
@@ -25,7 +24,6 @@ const archivedThreads = await getChannelArchivedThreads(forumChannel.id);
 const channel = await getChannel(id);
 const invite = await createChannelInvite(id);
 const messages = await getChannelMessages(id);
-const guild = await getGuild();
 ---
 
 <Layout title={`${channel.name}`}>

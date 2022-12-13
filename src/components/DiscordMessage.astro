@@ -8,6 +8,8 @@ import styleParsedMessage from "@utils/styleParsedMessage";
 
 const { message } = Astro.props;
 
+console.log(message);
+
 const user = await getUser(message.author.id);
 
 const html = toHTML(message.content);
@@ -21,6 +23,25 @@ if (message.attachments.length > 0) {
         `<img src="${attachment.proxy_url}" class="w-1/2" alt="${attachment.filename}" />`
       );
       parsed.appendChild(attachmentElement);
+    }
+  });
+}
+
+// if there's an embed make sure we render html for it
+if (message.embeds.length > 0) {
+  message.embeds.map((embed) => {
+    if (embed.type === "article") {
+      const embedElement = parse(
+        `
+        <div class="bg-slate-800 p-4 w-1/3 flex flex-col gap-2">
+          <a href="${embed.url}" class="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">${embed.title}</a>
+          <p>${embed.description}</p>
+          <img src="${embed.thumbnail?.url}" class="w-full rounded-md" alt="${embed.title}" />           
+        </div>
+        `
+      );
+
+      parsed.appendChild(embedElement);
     }
   });
 }
