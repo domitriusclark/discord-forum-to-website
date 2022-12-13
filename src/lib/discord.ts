@@ -56,7 +56,7 @@ export async function getGuild() {
   }
 }
 
-export async function getUser(id: string) {
+export async function getUser(id: string | undefined) {
   const res = await fetch(`https://discord.com/api/v9/users/${id}`, {
     headers: {
       Authorization: `Bot ${import.meta.env.DISCORD_BOT_TOKEN}`,
