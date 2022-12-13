@@ -1,14 +1,11 @@
 ---
-import type { APIAttachment } from "discord-api-types/v9";
-
+import type { APIAttachment, APIEmbed } from "discord-api-types/v9";
 import { toHTML } from "discord-markdown";
 import { parse } from "node-html-parser";
 import { getUser } from "@lib/discord";
 import styleParsedMessage from "@utils/styleParsedMessage";
 
 const { message } = Astro.props;
-
-console.log(message);
 
 const user = await getUser(message.author.id);
 
@@ -29,7 +26,7 @@ if (message.attachments.length > 0) {
 
 // if there's an embed make sure we render html for it
 if (message.embeds.length > 0) {
-  message.embeds.map((embed) => {
+  message.embeds.map((embed: APIEmbed) => {
     if (embed.type === "article") {
       const embedElement = parse(
         `
