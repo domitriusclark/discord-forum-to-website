@@ -1,16 +1,16 @@
 ---
-import type { APIThreadChannel } from "discord-api-types/v9";
+import type { APIGuildForumTag, APIThreadChannel } from "discord-api-types/v9";
 interface Props {
-  id: string;
+  id: string | number | undefined;
   threads: APIThreadChannel[];
   archivedThreads: APIThreadChannel[];
-  tags: string[];
+  tags: APIGuildForumTag[];
 }
 
 import ThreadLinkBox from "@components/ThreadLinkBox.astro";
 import { getUser } from "@lib/discord";
 
-const { id = "", threads, archivedThreads, tags } = Astro.props;
+const { id, threads, archivedThreads, tags } = Astro.props;
 ---
 
 <nav class="bg-gray-500 h-screen w-2/5 flex justify-center">

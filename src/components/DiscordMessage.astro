@@ -4,7 +4,7 @@ import { parse } from "node-html-parser";
 import { getUser } from "@lib/discord";
 import styleParsedMessage from "@utils/styleParsedMessage";
 
-const { message } = Astro.props;
+const { message, thread } = Astro.props;
 
 const user = await getUser(message.author.id);
 
@@ -27,7 +27,7 @@ styleParsedMessage(parsed);
         />
       ) : (
         <img
-          src={`https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`}
+          src={`https://cdn.discordapp.com/avatars/${message.owner_id}/${user.avatar}.png`}
           class="rounded-full h-10 w-10 self-center"
         />
       )
