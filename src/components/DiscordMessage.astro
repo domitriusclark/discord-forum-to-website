@@ -1,16 +1,27 @@
 ---
+import type { APIAttachment } from "discord-api-types/v9";
+
 import { toHTML } from "discord-markdown";
 import { parse } from "node-html-parser";
 import { getUser } from "@lib/discord";
 import styleParsedMessage from "@utils/styleParsedMessage";
 
-const { message, thread } = Astro.props;
+const { message } = Astro.props;
 
 const user = await getUser(message.author.id);
 
 const html = toHTML(message.content);
 
 const parsed = parse(html);
+
+if (message.attachments.length > 0) {
+  message.attachments.map((attachment: APIAttachment) => {
+    const attachmentElement = parse(
+      `<img src="${attachment.proxy_url}" class="w-1/2" alt="${attachment.filename}" />`
+    );
+    parsed.appendChild(attachmentElement);
+  });
+}
 
 styleParsedMessage(parsed);
 ---
