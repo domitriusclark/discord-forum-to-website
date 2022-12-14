@@ -17,6 +17,8 @@
     "astro": "^1.6.7",
     "astro-seo": "^0.6.0",
     "discord-api-types": "^0.37.20",
+    "discord-markdown": "^2.5.1",
+    "node-html-parser": "^6.1.4",
     "tailwindcss": "^3.0.24"
   }
 }

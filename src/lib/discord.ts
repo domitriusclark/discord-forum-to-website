@@ -5,11 +5,13 @@ import type {
   APIThreadList,
   APIThreadChannel,
   APIUser,
+  APIGuildForumChannel,
+  Invite,
 } from "discord-api-types/v9";
 
 export async function createChannelInvite(
   channelId: string | number | undefined
-) {
+): Promise<Invite> {
   try {
     const channel = await getChannel(channelId);
     const parent = channel.parent_id;
@@ -56,7 +58,7 @@ export async function getGuild() {
   }
 }
 
-export async function getUser(id: string) {
+export async function getUser(id: string | undefined) {
   const res = await fetch(`https://discord.com/api/v9/users/${id}`, {
     headers: {
       Authorization: `Bot ${import.meta.env.DISCORD_BOT_TOKEN}`,
@@ -67,7 +69,9 @@ export async function getUser(id: string) {
   return user;
 }
 
-export async function getChannelArchivedThreads(channelId: string) {
+export async function getChannelArchivedThreads(
+  channelId: string
+): Promise<APIThreadChannel[]> {
   try {
     const response = await fetch(
       `https://discord.com/api/v9/channels/${channelId}/threads/archived/public`,
@@ -126,7 +130,9 @@ export async function getChannelMessage(channelId: string, messageId: string) {
 }
 
 // TODO: Come back and fix type issues with `activeThreadsFromForum`
-export async function getGuildActiveThreads(forumChannel: APIChannel) {
+export async function getGuildActiveThreads(
+  forumChannel: APITHreadChannel
+): Promise<APIThreadChannel[]> {
   try {
     const response = await fetch(
       `https://discord.com/api/v9/guilds/${
@@ -179,7 +185,7 @@ export async function getGuildActiveThreads(forumChannel: APIChannel) {
 
 export async function getChannelMessages(
   channelId: string | number | undefined
-) {
+): Promise<APIMessage[]> {
   try {
     const response = await fetch(
       `https://discord.com/api/v9/channels/${channelId}/messages`,
@@ -196,7 +202,9 @@ export async function getChannelMessages(
   }
 }
 
-export async function getChannel(channelId: string | number | undefined) {
+export async function getChannel(
+  channelId: string | number | undefined
+): Promise<APIChannel> {
   try {
     const response = await fetch(
       `https://discord.com/api/v9/channels/${channelId}`,
@@ -233,8 +241,7 @@ export async function getGuildChannels() {
   }
 }
 
-export function getForum(channels: APIChannel[]) {
-  console.log(channels);
+export function getForum(channels: APIChannel[]): APIGuildForumChannel {
   // 15 is the channel type for Forum Channels
   const forum = channels.find(
     (channel: APIChannel) =>

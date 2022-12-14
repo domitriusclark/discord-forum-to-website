@@ -1,0 +1,63 @@
+---
+import type { APIGuildForumTag, APIThreadChannel } from "discord-api-types/v9";
+interface Props {
+  id: string | number | undefined;
+  threads: APIThreadChannel[];
+  archivedThreads: APIThreadChannel[];
+  tags: APIGuildForumTag[];
+}
+
+import ThreadLinkBox from "@components/ThreadLinkBox.astro";
+import { getUser } from "@lib/discord";
+
+const { id, threads, archivedThreads, tags } = Astro.props;
+---
+
+<nav class="bg-gray-500 h-screen w-2/5 flex justify-center">
+  <div class="flex h-full overflow-y-scroll flex-col gap-4 items-center">
+    <h2>Active Threads:</h2>
+    {
+      threads.map(async (thread: APIThreadChannel) => {
+        const user = await getUser(thread.owner_id);
+        const avatar =
+          typeof user.avatar === "undefined" || "null"
+            ? "https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
+            : `https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`;
+        const isActiveLink =
+          parseInt(id) === parseInt(thread.id)
+            ? "border-red-800"
+            : "border-slate-800";
+        return (
+          <ThreadLinkBox
+            thread={thread}
+            isActiveLink={isActiveLink}
+            avatar={avatar}
+            tags={tags}
+          />
+        );
+      })
+    }
+    <h2>Archived Threads:</h2>
+    {
+      archivedThreads.map(async (thread: APIThreadChannel) => {
+        const user = await getUser(thread.owner_id);
+        const avatar =
+          typeof user.avatar === "undefined" || "null"
+            ? "https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
+            : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+        const isActiveLink =
+          parseInt(id) === parseInt(thread.id)
+            ? "border-red-800"
+            : "border-slate-800";
+        return (
+          <ThreadLinkBox
+            thread={thread}
+            isActiveLink={isActiveLink}
+            avatar={avatar}
+            tags={tags}
+          />
+        );
+      })
+    }
+  </div>
+</nav>

@@ -1,0 +1,89 @@
+---
+import type { APIAttachment, APIEmbed, APIMessage } from "discord-api-types/v9";
+interface Props {
+  message: APIMessage;
+}
+
+import { toHTML } from "discord-markdown";
+import { parse } from "node-html-parser";
+import { getUser } from "@lib/discord";
+import styleParsedMessage from "@utils/styleParsedMessage";
+
+const { message } = Astro.props;
+
+const user = await getUser(message.author.id);
+
+const html = toHTML(message.content);
+
+const parsed = parse(html);
+
+if (message.attachments.length > 0) {
+  message.attachments.map((attachment: APIAttachment) => {
+    if (attachment.content_type === "image/png") {
+      const attachmentElement = parse(
+        `<img src="${attachment.proxy_url}" class="w-1/2" alt="${attachment.filename}" />`
+      );
+      parsed.appendChild(attachmentElement);
+    }
+  });
+}
+
+if (message.embeds.length > 0) {
+  message.embeds.map((embed: APIEmbed) => {
+    if (embed.type === "article") {
+      const embedElement = parse(
+        `
+        <div class="bg-slate-800 p-4 w-1/3 flex flex-col gap-2">
+          <a href="${embed.url}" class="text-blue-500 hover:text-blue-700" target="_blank" rel="noopener noreferrer">${embed.title}</a>
+          <p>${embed.description}</p>
+          <img src="${embed.thumbnail?.url}" class="w-full rounded-md" alt="${embed.title}" />           
+        </div>
+        `
+      );
+
+      parsed.appendChild(embedElement);
+    }
+  });
+}
+
+styleParsedMessage(parsed);
+---
+
+<script>
+  // We need to do this because we want proper message formatting as a row until there's multiple types of content in a message, then we want it to be a column
+  const messageDiv = document.querySelectorAll("#discord-message");
+  function addClassToDivs() {
+    messageDiv.forEach((div) => {
+      console.log(div);
+      if (div.children.length >= 2) {
+        div.classList.add("flex-col");
+      }
+    });
+  }
+  addClassToDivs();
+</script>
+
+<article
+  class="flex flex-col border-2 p-5 rounded-lg border-slate-800 bg-gray-700"
+>
+  <div class="flex gap-3 items-center">
+    {
+      typeof user.avatar === "undefined" || "null" ? (
+        <img
+          src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
+          class="rounded-full h-10 w-10 self-center"
+        />
+      ) : (
+        <img
+          src={`https://cdn.discordapp.com/avatars/${message.owner_id}/${user.avatar}.png`}
+          class="rounded-full h-10 w-10 self-center"
+        />
+      )
+    }
+    <h3 class="font-bold">Written by: {message.author.username}</h3>
+  </div>
+
+  <div id="discord-message" class="flex gap-1 mt-5">
+    {parsed}
+  </div>
+</article>

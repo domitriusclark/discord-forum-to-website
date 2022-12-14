@@ -1,63 +1,51 @@
 ---
 import Layout from "@layouts/Layout.astro";
-import Nav from "@components/Nav.astro";
+import Sidebar from "@components/Sidebar.astro";
+import DiscordMessage from "@components/DiscordMessage.astro";
+
 import {
   getChannel,
   getChannelMessages,
-  getGuild,
   createChannelInvite,
-  getUser,
-} from "@utils/discord";
+  getForum,
+  getGuildChannels,
+  getGuildActiveThreads,
+  getChannelArchivedThreads,
+} from "@lib/discord";
 
 const { id } = Astro.params;
+
+const channels = await getGuildChannels();
+const forumChannel = getForum(channels);
+const tags = forumChannel.available_tags;
+const threads = await getGuildActiveThreads(forumChannel);
+const archivedThreads = await getChannelArchivedThreads(forumChannel.id);
 
 const channel = await getChannel(id);
 const invite = await createChannelInvite(id);
 const messages = await getChannelMessages(id);
-const guild = await getGuild();
 ---
 
 <Layout title={`${channel.name}`}>
-  <Nav guild={guild} />
-  <main class="h-full">
+  <Sidebar
+    id={id}
+    threads={threads}
+    archivedThreads={archivedThreads}
+    tags={tags}
+  />
+  <main class="max-h-screen w-full px-6 py-4 overflow-scroll">
     <div class="flex flex-col gap-3">
       <h1 class="text-4xl">{channel.name}</h1>
       <a class="mt-4" href={`https://discord.gg/${invite.code}`}>
         Discord Invite
       </a>
     </div>
-    <div class="flex flex-col gap-4 mt-7">
+    <div class="mt-7">
       {
-        messages.reverse().map(async (message) => {
-          const user = await getUser(message.author.id);
-          return (
-            <article class="flex flex-col border-2 p-5 rounded-lg border-slate-800 bg-gray-700">
-              <div class="flex gap-3 items-center">
-                {typeof user.avatar === "undefined" || "null" ? (
-                  <img
-                    src="https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
-                    class="rounded-full h-10 w-10 self-center"
-                  />
-                ) : (
-                  <img
-                    src={`https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`}
-                    class="rounded-full h-10 w-10 self-center"
-                  />
-                )}
-                <h3 class="font-bold">Written by: {message.author.username}</h3>
-              </div>
-              <p class="mt-4">{message.content}</p>
-            </article>
-          );
-        })
+        messages
+          .reverse()
+          .map(async (message) => <DiscordMessage message={message} />)
       }
     </div>
   </main>
 </Layout>
-<style>
-  main {
-    margin: auto;
-    padding: 1.5rem;
-    max-width: 80ch;
-  }
-</style>
