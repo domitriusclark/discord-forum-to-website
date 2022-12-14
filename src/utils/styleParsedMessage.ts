@@ -15,5 +15,10 @@ export default function styleParsedMessage(content: HTMLElement): HTMLElement {
     code.setAttribute("class", "bg-gray-800 text-red-400 p-2 rounded-md");
   });
 
+  // add w-5 and h-5 to all emojis
+  content.querySelectorAll(".d-emoji").forEach((emoji) => {
+    emoji.setAttribute("class", "w-6 h-6");
+  });
+
   return content;
 }

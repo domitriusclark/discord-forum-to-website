@@ -1,5 +1,9 @@
 ---
-import type { APIAttachment, APIEmbed } from "discord-api-types/v9";
+import type { APIAttachment, APIEmbed, APIMessage } from "discord-api-types/v9";
+interface Props {
+  message: APIMessage;
+}
+
 import { toHTML } from "discord-markdown";
 import { parse } from "node-html-parser";
 import { getUser } from "@lib/discord";
@@ -24,7 +28,6 @@ if (message.attachments.length > 0) {
   });
 }
 
-// if there's an embed make sure we render html for it
 if (message.embeds.length > 0) {
   message.embeds.map((embed: APIEmbed) => {
     if (embed.type === "article") {
@@ -46,6 +49,20 @@ if (message.embeds.length > 0) {
 styleParsedMessage(parsed);
 ---
 
+<script>
+  // We need to do this because we want proper message formatting as a row until there's multiple types of content in a message, then we want it to be a column
+  const messageDiv = document.querySelectorAll("#discord-message");
+  function addClassToDivs() {
+    messageDiv.forEach((div) => {
+      console.log(div);
+      if (div.children.length >= 2) {
+        div.classList.add("flex-col");
+      }
+    });
+  }
+  addClassToDivs();
+</script>
+
 <article
   class="flex flex-col border-2 p-5 rounded-lg border-slate-800 bg-gray-700"
 >
@@ -66,7 +83,7 @@ styleParsedMessage(parsed);
     <h3 class="font-bold">Written by: {message.author.username}</h3>
   </div>
 
-  <div class="flex flex-col gap-1 mt-5">
+  <div id="discord-message" class="flex gap-1 mt-5">
     {parsed}
   </div>
 </article>
