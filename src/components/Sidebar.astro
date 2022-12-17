@@ -24,7 +24,7 @@ const { id, threads, archivedThreads, tags } = Astro.props;
             ? "https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
             : `https://cdn.discordapp.com/avatars/${thread.owner_id}/${user.avatar}.png`;
         const isActiveLink =
-          parseInt(id) === parseInt(thread.id)
+          typeof id === "string" && parseInt(id) === parseInt(thread.id)
             ? "border-red-800"
             : "border-slate-800";
         return (
@@ -46,7 +46,7 @@ const { id, threads, archivedThreads, tags } = Astro.props;
             ? "https://cdn3.iconfinder.com/data/icons/popular-services-brands-vol-2/512/discord-1024.png"
             : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
         const isActiveLink =
-          parseInt(id) === parseInt(thread.id)
+        typeof id === "string" && parseInt(id) === parseInt(thread.id)
             ? "border-red-800"
             : "border-slate-800";
         return (

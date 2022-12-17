@@ -1,12 +1,14 @@
 ---
+import discordMarkdown from 'discord-markdown';
+const { toHTML } = discordMarkdown;
 import type { APIAttachment, APIEmbed, APIMessage } from "discord-api-types/v9";
 interface Props {
   message: APIMessage;
 }
 
-import { toHTML } from "discord-markdown";
 import { parse } from "node-html-parser";
 import { getUser } from "@lib/discord";
+
 import styleParsedMessage from "@utils/styleParsedMessage";
 
 const { message } = Astro.props;
@@ -54,7 +56,7 @@ styleParsedMessage(parsed);
   const messageDiv = document.querySelectorAll("#discord-message");
   function addClassToDivs() {
     messageDiv.forEach((div) => {
-      console.log(div);
+      
       if (div.children.length >= 2) {
         div.classList.add("flex-col");
       }

@@ -1,4 +1,6 @@
 ---
+import type { APIThreadChannel, APIGuildForumTag } from 'discord-api-types/v9';
+
 import Layout from "@layouts/Layout.astro";
 import Sidebar from "@components/Sidebar.astro";
 import DiscordMessage from "@components/DiscordMessage.astro";
@@ -13,17 +15,42 @@ import {
   getChannelArchivedThreads,
 } from "@lib/discord";
 
-const { id } = Astro.params;
+interface Props {
+  id: string;
+  threads: APIThreadChannel[];
+  archivedThreads: APIThreadChannel[];
+  tags: APIGuildForumTag[]
+}
 
-const channels = await getGuildChannels();
-const forumChannel = getForum(channels);
-const tags = forumChannel.available_tags;
-const threads = await getGuildActiveThreads(forumChannel);
-const archivedThreads = await getChannelArchivedThreads(forumChannel.id);
+export async function getStaticPaths() {  
+  const channels = await getGuildChannels();
+  const forumChannel = getForum(channels);
+  const threads = await getGuildActiveThreads(forumChannel);
+  const archivedThreads = await getChannelArchivedThreads(forumChannel.id);
+  const tags = forumChannel.available_tags;
+
+  const allThreads = [...threads, ...archivedThreads]
+
+  return allThreads.map((thread => {    
+      return {
+        params: { id: thread.id},
+        props: { 
+          id: thread.id,
+          threads,
+          archivedThreads,
+          tags
+        }
+      }
+    }))
+  
+}
+
+const { id, threads, archivedThreads, tags }: Props = Astro.props;
 
 const channel = await getChannel(id);
 const invite = await createChannelInvite(id);
 const messages = await getChannelMessages(id);
+
 ---
 
 <Layout title={`${channel.name}`}>
